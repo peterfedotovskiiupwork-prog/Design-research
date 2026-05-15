@@ -39,7 +39,7 @@ export async function callGemma(
               maxOutputTokens,
             },
           }),
-          timeoutRace(300000),
+          timeoutRace(180000),
         ]);
         return response.text ?? "";
       } catch (err: any) {

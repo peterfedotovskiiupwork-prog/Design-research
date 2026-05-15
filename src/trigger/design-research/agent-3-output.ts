@@ -187,7 +187,7 @@ CRITICAL RULES:
 
 Return ONLY the raw HTML starting with <!DOCTYPE html>.`;
 
-  return callGemma(ai, systemPrompt, userPrompt, 64000);
+  return callGemma(ai, systemPrompt, userPrompt, 32000);
 }
 
 export const agent3Output = task({
