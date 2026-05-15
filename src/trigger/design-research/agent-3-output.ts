@@ -1,12 +1,12 @@
 import { task } from "@trigger.dev/sdk";
-import { GoogleGenAI } from "@google/genai";
 import puppeteer from "puppeteer";
 import nodemailer from "nodemailer";
 import fs from "fs/promises";
 import path from "path";
 import type { ResearchInput } from "./types.js";
+import { createAI, callGemma } from "./llm.js";
+import type { GoogleGenAI } from "@google/genai";
 
-const gemmaModel = "gemma-4-31b-it";
 const OUTPUT_DIR = path.join(process.cwd(), "out");
 
 function validateEnv() {
@@ -17,19 +17,6 @@ function validateEnv() {
   if (!gmailUser) throw new Error("GMAIL_USER is not set");
   if (!gmailPass) throw new Error("GMAIL_APP_PASSWORD is not set");
   return { geminiKey, gmailUser, gmailPass };
-}
-
-async function callGemma(ai: GoogleGenAI, systemPrompt: string, userPrompt: string, maxTokens = 64000) {
-  const response = await ai.models.generateContent({
-    model: gemmaModel,
-    contents: userPrompt,
-    config: {
-      systemInstruction: systemPrompt,
-      temperature: 0.6,
-      maxOutputTokens: maxTokens,
-    },
-  });
-  return response.text ?? "";
 }
 
 async function generateHtml(ai: GoogleGenAI, curatedBrief: string, input: ResearchInput): Promise<string> {
@@ -210,7 +197,7 @@ export const agent3Output = task({
   retry: { maxAttempts: 2, factor: 2, minTimeoutInMs: 15000, maxTimeoutInMs: 120000 },
   run: async (payload: { input: ResearchInput; curatedBrief: string }): Promise<{ pdfPath: string; emailStatus: string }> => {
     const { geminiKey, gmailUser, gmailPass } = validateEnv();
-    const ai = new GoogleGenAI({ apiKey: geminiKey });
+    const ai = createAI();
     const { input, curatedBrief } = payload;
 
     await fs.mkdir(OUTPUT_DIR, { recursive: true });

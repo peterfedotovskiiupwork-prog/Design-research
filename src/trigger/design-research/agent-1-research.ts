@@ -1,8 +1,6 @@
 import { task } from "@trigger.dev/sdk";
-import { GoogleGenAI } from "@google/genai";
 import type { ResearchInput, ResearchOutput } from "./types.js";
-
-const gemmaModel = "gemma-4-31b-it";
+import { createAI, callGemma } from "./llm.js";
 
 function validateEnv() {
   const geminiKey = process.env.GEMINI_API_KEY;
@@ -30,30 +28,12 @@ async function searchTavily(apiKey: string, query: string, maxResults = 6) {
   return res.json();
 }
 
-async function callGemma(
-  ai: GoogleGenAI,
-  systemPrompt: string,
-  userPrompt: string,
-  maxOutputTokens = 48000
-) {
-  const response = await ai.models.generateContent({
-    model: gemmaModel,
-    contents: userPrompt,
-    config: {
-      systemInstruction: systemPrompt,
-      temperature: 0.7,
-      maxOutputTokens,
-    },
-  });
-  return response.text ?? "";
-}
-
 export const agent1Research = task({
   id: "agent-1-research",
   retry: { maxAttempts: 2, factor: 2, minTimeoutInMs: 10000, maxTimeoutInMs: 120000 },
   run: async (input: ResearchInput): Promise<ResearchOutput> => {
     const { geminiKey, tavilyKey } = validateEnv();
-    const ai = new GoogleGenAI({ apiKey: geminiKey });
+    const ai = createAI();
 
     const clientDomain = `${input.clientName.toLowerCase().replace(/\s+/g, "-")}-${input.niche.toLowerCase().replace(/\s+/g, "-")}.com`;
 

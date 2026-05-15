@@ -1,8 +1,6 @@
 import { task } from "@trigger.dev/sdk";
-import { GoogleGenAI } from "@google/genai";
 import type { ResearchInput, ResearchOutput } from "./types.js";
-
-const gemmaModel = "gemma-4-31b-it";
+import { createAI, callGemma } from "./llm.js";
 
 function validateEnv() {
   const key = process.env.GEMINI_API_KEY;
@@ -10,25 +8,12 @@ function validateEnv() {
   return key;
 }
 
-async function callGemma(ai: GoogleGenAI, systemPrompt: string, userPrompt: string) {
-  const response = await ai.models.generateContent({
-    model: gemmaModel,
-    contents: userPrompt,
-    config: {
-      systemInstruction: systemPrompt,
-      temperature: 0.5,
-      maxOutputTokens: 48000,
-    },
-  });
-  return response.text ?? "";
-}
-
 export const agent2Curator = task({
   id: "agent-2-curator",
   retry: { maxAttempts: 2, factor: 2, minTimeoutInMs: 10000, maxTimeoutInMs: 120000 },
   run: async (payload: { input: ResearchInput; research: ResearchOutput }): Promise<string> => {
     const apiKey = validateEnv();
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = createAI();
     const { input, research } = payload;
 
     const combinedResearch = Object.entries(research)
