@@ -9,11 +9,11 @@
     "dev:server": "tsx watch src/server/index.ts",
     "start": "tsx src/server/index.ts",
     "build": "tsc",
-    "typecheck": "tsc --noEmit",
-    "postinstall": "puppeteer browsers install chrome"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@google/genai": "^1.0.0",
+    "@trigger.dev/build": "^4.4.6",
     "@trigger.dev/sdk": "4.4.6",
     "express": "^4.21.0",
     "nodemailer": "^6.9.0",
