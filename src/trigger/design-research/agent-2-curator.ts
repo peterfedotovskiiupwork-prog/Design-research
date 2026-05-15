@@ -10,7 +10,7 @@ function validateEnv() {
 
 export const agent2Curator = task({
   id: "agent-2-curator",
-  retry: { maxAttempts: 2, factor: 2, minTimeoutInMs: 10000, maxTimeoutInMs: 120000 },
+  retry: { maxAttempts: 5, factor: 2, minTimeoutInMs: 10000, maxTimeoutInMs: 120000 },
   run: async (payload: { input: ResearchInput; research: ResearchOutput }): Promise<string> => {
     const apiKey = validateEnv();
     const ai = createAI();

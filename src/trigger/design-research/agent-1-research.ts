@@ -39,7 +39,7 @@ async function searchTavily(apiKey: string, query: string, maxResults = 6) {
 
 export const agent1Research = task({
   id: "agent-1-research",
-  retry: { maxAttempts: 2, factor: 2, minTimeoutInMs: 10000, maxTimeoutInMs: 120000 },
+  retry: { maxAttempts: 5, factor: 2, minTimeoutInMs: 10000, maxTimeoutInMs: 120000 },
   run: async (input: ResearchInput): Promise<ResearchOutput> => {
     const { geminiKey, tavilyKey } = validateEnv();
     const ai = createAI();

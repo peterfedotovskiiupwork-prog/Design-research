@@ -192,7 +192,7 @@ Return ONLY the raw HTML starting with <!DOCTYPE html>.`;
 
 export const agent3Output = task({
   id: "agent-3-output",
-  retry: { maxAttempts: 2, factor: 2, minTimeoutInMs: 15000, maxTimeoutInMs: 120000 },
+  retry: { maxAttempts: 5, factor: 2, minTimeoutInMs: 15000, maxTimeoutInMs: 120000 },
   run: async (payload: { input: ResearchInput; curatedBrief: string }): Promise<{ pdfPath: string; emailStatus: string }> => {
     const { geminiKey, gmailUser, gmailPass } = validateEnv();
     const ai = createAI();
