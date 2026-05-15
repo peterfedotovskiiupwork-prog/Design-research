@@ -17,6 +17,15 @@ export default defineConfig({
   build: {
     extensions: [
       puppeteer(),
+      {
+        name: "puppeteer-npm",
+        onBuildComplete: async (context) => {
+          context.addLayer({
+            id: "puppeteer-npm",
+            commands: ["npm install puppeteer@^24.0.0 nodemailer@^6.9.0 --no-save"],
+          });
+        },
+      },
     ],
   },
 });
