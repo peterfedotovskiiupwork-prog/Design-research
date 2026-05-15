@@ -15,6 +15,19 @@ export default defineConfig({
     maxTimeoutInMs: 60000,
   },
   build: {
-    extensions: [puppeteer()],
+    extensions: [
+      puppeteer(),
+      {
+        name: "npm-deps",
+        onBuildStart: async (context) => {
+          context.addLayer({
+            id: "npm-deps",
+            dependencies: {
+              puppeteer: "^24.0.0",
+            },
+          });
+        },
+      },
+    ],
   },
 });
