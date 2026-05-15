@@ -17,17 +17,6 @@ export default defineConfig({
   build: {
     extensions: [
       puppeteer(),
-      {
-        name: "npm-deps",
-        onBuildStart: async (context) => {
-          context.addLayer({
-            id: "npm-deps",
-            dependencies: {
-              puppeteer: "^24.0.0",
-            },
-          });
-        },
-      },
     ],
   },
 });
