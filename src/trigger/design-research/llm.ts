@@ -26,7 +26,7 @@ export async function callGemma(
   const models = [PRIMARY, FALLBACK];
 
   for (let i = 0; i < models.length; i++) {
-    const modelRetries = 3;
+    const modelRetries = 2;
     for (let r = 0; r < modelRetries; r++) {
       try {
         const response = await Promise.race([
