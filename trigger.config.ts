@@ -1,4 +1,5 @@
 import { defineConfig } from "@trigger.dev/sdk/v3";
+import { puppeteer } from "@trigger.dev/build/extensions/puppeteer";
 
 export default defineConfig({
   project: process.env.TRIGGER_PROJECT_REF!,
@@ -12,5 +13,8 @@ export default defineConfig({
     factor: 2,
     minTimeoutInMs: 5000,
     maxTimeoutInMs: 60000,
+  },
+  build: {
+    extensions: [puppeteer()],
   },
 });
