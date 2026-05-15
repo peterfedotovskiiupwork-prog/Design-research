@@ -9,16 +9,8 @@ export function createAI() {
   return new GoogleGenAI({ apiKey: key });
 }
 
-async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
-  let timer: ReturnType<typeof setTimeout>;
-  const timeout = new Promise<never>((_, reject) => {
-    timer = setTimeout(() => reject(new Error(`Request timed out after ${ms}ms`)), ms);
-  });
-  try {
-    return await Promise.race([promise, timeout]);
-  } finally {
-    clearTimeout(timer!);
-  }
+function timeoutRace(ms: number): Promise<never> {
+  return new Promise((_, reject) => setTimeout(() => reject(new Error(`Timed out after ${ms}ms`)), ms));
 }
 
 export async function callGemma(
@@ -31,7 +23,7 @@ export async function callGemma(
 
   for (let i = 0; i < models.length; i++) {
     try {
-      const response = await withTimeout(
+      const response = await Promise.race([
         ai.models.generateContent({
           model: models[i],
           contents: userPrompt,
@@ -41,8 +33,8 @@ export async function callGemma(
             maxOutputTokens,
           },
         }),
-        300000
-      );
+        timeoutRace(300000),
+      ]);
       return response.text ?? "";
     } catch (err: any) {
       const message = err?.message ?? String(err);

@@ -1,6 +1,4 @@
 import { task } from "@trigger.dev/sdk";
-import puppeteer from "puppeteer";
-import nodemailer from "nodemailer";
 import fs from "fs/promises";
 import path from "path";
 import type { ResearchInput } from "./types.js";
@@ -207,6 +205,7 @@ export const agent3Output = task({
     await fs.writeFile(htmlPath, html, "utf-8");
 
     const pdfPath = htmlPath.replace(/\.html$/, ".pdf");
+    const { default: puppeteer } = await import("puppeteer");
     const browser = await puppeteer.launch({
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -227,6 +226,7 @@ export const agent3Output = task({
       await browser.close();
     }
 
+    const { default: nodemailer } = await import("nodemailer");
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: { user: gmailUser, pass: gmailPass },
