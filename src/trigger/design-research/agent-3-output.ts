@@ -205,7 +205,7 @@ export const agent3Output = task({
     await fs.writeFile(htmlPath, html, "utf-8");
 
     const pdfPath = htmlPath.replace(/\.html$/, ".pdf");
-    const { default: puppeteer } = await import("puppeteer");
+    const { default: puppeteer } = await import("puppeteer-core");
     const browser = await puppeteer.launch({
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],

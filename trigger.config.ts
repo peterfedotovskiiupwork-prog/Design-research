@@ -22,7 +22,7 @@ export default defineConfig({
         onBuildComplete: async (context) => {
           context.addLayer({
             id: "puppeteer-npm",
-            commands: ["npm install puppeteer@^24.0.0 nodemailer@^6.9.0 --no-save"],
+            commands: ["npm install puppeteer-core@^24.0.0 nodemailer@^6.9.0 --no-save"],
           });
         },
       },
