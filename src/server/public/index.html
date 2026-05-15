@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Research — New Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #F5F5F0;
+    color: #1A1A1A;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .container {
+    width: 100%;
+    max-width: 640px;
+  }
+  .card {
+    background: #FFFFFF;
+    border-radius: 8px;
+    padding: 48px 40px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  }
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 36px;
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 36px;
+    font-weight: 400;
+  }
+  .form-group {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #555;
+    margin-bottom: 6px;
+  }
+  input, textarea {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    padding: 12px 14px;
+    border: 1px solid #DDD;
+    border-radius: 4px;
+    background: #FAFAFA;
+    transition: border-color 0.15s, background 0.15s;
+    outline: none;
+    color: #1A1A1A;
+  }
+  input:focus, textarea:focus {
+    border-color: #888;
+    background: #FFF;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 64px;
+  }
+  .row {
+    display: flex;
+    gap: 16px;
+  }
+  .row .form-group { flex: 1; }
+  .submit-btn {
+    width: 100%;
+    padding: 14px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #FFF;
+    background: #1A1A1A;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    margin-top: 8px;
+  }
+  .submit-btn:hover { background: #333; }
+  .submit-btn:active { transform: scale(0.98); }
+  .submit-btn:disabled {
+    background: #BBB;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .result {
+    display: none;
+    margin-top: 24px;
+    padding: 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .result.success { background: #F0F7F0; color: #1A3A1A; display: block; }
+  .result.error { background: #FDF0F0; color: #3A1A1A; display: block; }
+  .result .run-id {
+    font-family: 'DM Sans', monospace;
+    font-size: 13px;
+    background: rgba(0,0,0,0.05);
+    padding: 4px 8px;
+    border-radius: 3px;
+    word-break: break-all;
+  }
+  .spinner {
+    display: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #FFF;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin: 0 auto;
+  }
+  .submit-btn.loading .spinner { display: inline-block; }
+  .submit-btn.loading .btn-text { display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (max-width: 480px) {
+    .card { padding: 32px 24px; }
+    .row { flex-direction: column; gap: 0; }
+    h1 { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="card">
+    <h1>Design Research</h1>
+    <p class="subtitle">Enter client details to generate a curated design brief</p>
+
+    <form id="researchForm">
+      <div class="row">
+        <div class="form-group">
+          <label for="niche">Niche / Industry</label>
+          <input type="text" id="niche" name="niche" placeholder="e.g. Beauty Education" required>
+        </div>
+        <div class="form-group">
+          <label for="clientName">Client Name</label>
+          <input type="text" id="clientName" name="clientName" placeholder="e.g. Felena" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="clientGoals">Client Goals</label>
+        <textarea id="clientGoals" name="clientGoals" placeholder="What does the client want to achieve? Sell courses, generate leads, build brand awareness..." required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="animationStyle">Animation Style Preference</label>
+        <input type="text" id="animationStyle" name="animationStyle" placeholder="e.g. Organic flowing scroll, subtle micro-interactions, bold reveals" required>
+      </div>
+
+      <div class="form-group">
+        <label for="brandServices">Brand Services</label>
+        <textarea id="brandServices" name="brandServices" placeholder="What does the client offer? Courses, products, consulting, memberships..." required></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span class="btn-text">Start Research →</span>
+        <span class="spinner"></span>
+      </button>
+    </form>
+
+    <div id="result" class="result"></div>
+  </div>
+</div>
+
+<script>
+const form = document.getElementById('researchForm');
+const submitBtn = document.getElementById('submitBtn');
+const resultDiv = document.getElementById('result');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  submitBtn.classList.add('loading');
+  submitBtn.disabled = true;
+  resultDiv.className = 'result';
+
+  const data = {
+    niche: document.getElementById('niche').value.trim(),
+    clientName: document.getElementById('clientName').value.trim(),
+    clientGoals: document.getElementById('clientGoals').value.trim(),
+    animationStyle: document.getElementById('animationStyle').value.trim(),
+    brandServices: document.getElementById('brandServices').value.trim(),
+  };
+
+  try {
+    const res = await fetch('/init-research', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const json = await res.json();
+
+    if (res.ok) {
+      resultDiv.className = 'result success';
+      resultDiv.innerHTML = `
+        <strong>Research started</strong><br>
+        ${json.message}<br><br>
+        <strong>Run ID:</strong> <span class="run-id">${json.runId}</span><br><br>
+        <small>Track progress in the <a href="https://cloud.trigger.dev" target="_blank" style="color:#555;">Trigger.dev dashboard</a>.</small>
+      `;
+      form.reset();
+    } else {
+      resultDiv.className = 'result error';
+      resultDiv.textContent = json.error || 'Something went wrong';
+    }
+  } catch (err) {
+    resultDiv.className = 'result error';
+    resultDiv.textContent = 'Failed to connect to server. Is it running?';
+  } finally {
+    submitBtn.classList.remove('loading');
+    submitBtn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
