@@ -11,21 +11,28 @@ function validateEnv() {
 }
 
 async function searchTavily(apiKey: string, query: string, maxResults = 6) {
-  const res = await fetch("https://api.tavily.com/search", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      api_key: apiKey,
-      query,
-      search_depth: "advanced",
-      include_answer: true,
-      max_results: maxResults,
-    }),
-  });
-  if (!res.ok) {
-    throw new Error(`Tavily search failed: ${res.status} ${await res.text()}`);
+  const ac = new AbortController();
+  const t = setTimeout(() => ac.abort(), 30000);
+  try {
+    const res = await fetch("https://api.tavily.com/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      signal: ac.signal,
+      body: JSON.stringify({
+        api_key: apiKey,
+        query,
+        search_depth: "advanced",
+        include_answer: true,
+        max_results: maxResults,
+      }),
+    });
+    if (!res.ok) {
+      throw new Error(`Tavily search failed: ${res.status} ${await res.text()}`);
+    }
+    return res.json();
+  } finally {
+    clearTimeout(t);
   }
-  return res.json();
 }
 
 export const agent1Research = task({

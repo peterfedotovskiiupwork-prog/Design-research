@@ -9,6 +9,18 @@ export function createAI() {
   return new GoogleGenAI({ apiKey: key });
 }
 
+async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout>;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`Request timed out after ${ms}ms`)), ms);
+  });
+  try {
+    return await Promise.race([promise, timeout]);
+  } finally {
+    clearTimeout(timer!);
+  }
+}
+
 export async function callGemma(
   ai: GoogleGenAI,
   systemPrompt: string,
@@ -19,15 +31,18 @@ export async function callGemma(
 
   for (let i = 0; i < models.length; i++) {
     try {
-      const response = await ai.models.generateContent({
-        model: models[i],
-        contents: userPrompt,
-        config: {
-          systemInstruction: systemPrompt,
-          temperature: 0.5,
-          maxOutputTokens,
-        },
-      });
+      const response = await withTimeout(
+        ai.models.generateContent({
+          model: models[i],
+          contents: userPrompt,
+          config: {
+            systemInstruction: systemPrompt,
+            temperature: 0.5,
+            maxOutputTokens,
+          },
+        }),
+        300000
+      );
       return response.text ?? "";
     } catch (err: any) {
       const message = err?.message ?? String(err);
@@ -38,6 +53,7 @@ export async function callGemma(
         message.includes("INTERNAL") ||
         message.includes("UNAVAILABLE") ||
         message.includes("try again") ||
+        message.includes("timed out") ||
         err?.status === 500 ||
         err?.status === 503 ||
         err?.code === 500 ||
