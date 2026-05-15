@@ -30,14 +30,21 @@ export async function callGemma(
       });
       return response.text ?? "";
     } catch (err: any) {
-      const is500 =
-        err?.message?.includes("500") ||
-        err?.message?.includes("INTERNAL") ||
+      const message = err?.message ?? String(err);
+      const shouldFallback =
+        message.includes("500") ||
+        message.includes("503") ||
+        message.includes("fetch failed") ||
+        message.includes("INTERNAL") ||
+        message.includes("UNAVAILABLE") ||
+        message.includes("try again") ||
         err?.status === 500 ||
-        err?.code === 500;
+        err?.status === 503 ||
+        err?.code === 500 ||
+        err?.code === 503;
 
-      if (is500 && i < models.length - 1) {
-        console.warn(`Gemma ${models[i]} returned 500, falling back to ${models[i + 1]}`);
+      if (shouldFallback && i < models.length - 1) {
+        console.warn(`Gemma ${models[i]} failed: ${message.slice(0, 120)}, falling back to ${models[i + 1]}`);
         continue;
       }
 
